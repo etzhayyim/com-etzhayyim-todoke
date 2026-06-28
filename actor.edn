@@ -1,0 +1,8 @@
+{:did        "did:web:etzhayyim.github.io:com-etzhayyim-todoke"
+ :handle     "todoke.etzhayyim.com"
+ :ipns-key   "todoke-actor"
+ :graph-type "com.etzhayyim.todoke.graph"
+ :published  "2026-06-28"
+ :bundle [["data" "data"]
+          [".well-known/did.json" "did.json"]
+          ["README.md" "README.md"]]}
