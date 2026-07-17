@@ -127,6 +127,20 @@
         tour
         (recur new-tour)))))
 
+(defn sequence-stops
+  "Return [order-of-ids length] for an open route without applying todoke's
+   delivery safety envelope. This is the repository boundary for consumers
+   that share the deterministic sequencer but use another operational envelope.
+   The first stop remains pinned; an empty collection returns [[] 0.0]."
+  [stops]
+  (if (empty? stops)
+    [[] 0.0]
+    (let [seq-idx (two-opt (nearest-neighbour stops) stops)
+          length (reduce + (map #(stop-dist (nth stops (nth seq-idx %))
+                                            (nth stops (nth seq-idx (inc %))))
+                                (range (dec (count seq-idx)))))]
+      [(mapv #(-> (nth stops %) :id) seq-idx) length])))
+
 (defn plan-last-mile
   "Return [order-of-ids length-m] for a safety-validated last-mile path.
 
@@ -140,11 +154,7 @@
   (when (empty? stops)
     (throw (envelope-violation "G7: no stops to route")))
   (check-envelope stops sae-level commanded-mps)
-  (let [seq-idx (two-opt (nearest-neighbour stops) stops)
-        length (reduce + (map #(stop-dist (nth stops (nth seq-idx %))
-                                          (nth stops (nth seq-idx (inc %))))
-                              (range (dec (count seq-idx)))))]
-    [(mapv #(-> (nth stops %) :id) seq-idx) length]))
+  (sequence-stops stops))
 
 ;; --- Labour-liberation sizing (mission + G2 coupling) ---------------------------------
 
