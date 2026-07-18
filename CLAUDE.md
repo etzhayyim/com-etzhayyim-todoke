@@ -1,4 +1,4 @@
-# 20-actors/todoke — CLAUDE.md
+# . — CLAUDE.md
 
 ## Identity
 - **Name**: todoke (届け — "to deliver / to reach the destination")
@@ -26,7 +26,7 @@ The two constitutionally-load-bearing cells are **fully coded + tested** at R0:
 Pure, zero-dep, deterministic. The repo has **no root Cargo workspace**, so this is a standalone
 leaf crate: `cd route && cargo test` (7 tests). It owns ONLY the last-mile-specific math:
 stop sequencing (NN + 2-opt) and the SAE-L4 sidewalk ODD safety envelope. Everything else
-(perception/planning/control) delegates to kami-autodrive. `methods/last_mile.py` is the
+(perception/planning/control) delegates to kami-autodrive. `src/todoke/methods/last_mile.cljc` is the
 parity-tested Python mirror — keep the two in lockstep (per-zone caps, NN/2-opt order, refusals).
 
 ## Constitutional invariants (encoded in 3 places: schema + lexicon `const` + code)
@@ -47,9 +47,9 @@ parity-tested Python mirror — keep the two in lockstep (per-zone caps, NN/2-op
 ## Testing (R0)
 
 ```bash
-cd 20-actors/todoke/route   && cargo test                                              # 7
-cd 20-actors/todoke/methods && PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q   # 7
-cd 20-actors/todoke/cells   && PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q   # 12
+cd ./route   && cargo test                                              # 7
+cd ./methods && PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q   # 7
+cd ./cells   && PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q   # 12
 ```
 
 The `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` is needed only to dodge an unrelated broken

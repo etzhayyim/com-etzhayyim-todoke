@@ -32,8 +32,8 @@ A pure, zero-dependency, deterministic Rust crate (`cargo test` in `route/`, **1
   4.2 m/s), enter a vehicular road (outside the ODD, N2), or assume SAE level > 4 (N2). The
   charter is enforced by construction — no caller can obtain an unsafe route.
 
-A faithful Python mirror lives in `methods/last_mile.py` (one model, two runtimes — the sumitsubo
-pattern, ADR-2606033600); `methods/test_last_mile.py` pins the two implementations to the same
+A faithful Python mirror lives in `src/todoke/methods/last_mile.cljc` (one model, two runtimes — the sumitsubo
+pattern, ADR-2606033600); `test/todoke/methods/test_last_mile.cljc` pins the two implementations to the same
 visiting order `[0, 4, 2, 3, 1]` on the shared fixture.
 
 ## 5 Pregel Cells
@@ -71,12 +71,12 @@ pools — the natural target of the labour-liberation mission.
 
 ```bash
 # Rust core + R1 sim (13 tests) + the curb-to-door demo
-cd 20-actors/todoke/route && cargo test && cargo run --example curb_to_door
+cd ./route && cargo test && cargo run --example curb_to_door
 
 # Python — run each suite from inside its own dir (the cells subpackage resolves its
 # sibling imports that way); plugin autoload off dodges an unrelated langsmith/pydantic clash.
-cd 20-actors/todoke/methods && PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q   # 7
-cd 20-actors/todoke/cells   && PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q   # 12
+cd ./methods && PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q   # 7
+cd ./cells   && PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q   # 12
 ```
 
 ## R1 — curb-to-door simulation (`route/src/sim.rs`)

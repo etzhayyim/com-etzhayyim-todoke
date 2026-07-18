@@ -1,7 +1,7 @@
 (ns todoke.methods.test-last-mile
   "Tests for todoke.methods.last-mile — sequencer correctness, G7 envelope, courier sizing.
 
-  1:1 port of `20-actors/todoke/methods/test_last_mile.py`.
+  1:1 port of `./test/todoke/methods/test_last_mile.cljc`.
 
   The PARITY contract: the Python/Clojure sequencer and the Rust `todoke-route` crate
   must return the SAME visiting order on the shared fixtures. The Rust side pins
@@ -36,13 +36,6 @@
             {:id 3 :x 10.0 :y 0.0  :zone "sidewalk"}]
         [_ length] (last-mile/plan-last-mile sq :commanded-mps 1.5)]
     (is (<= length (+ 30.0 1e-6)))))
-
-(deftest test-envelope-neutral-sequencing-contract
-  (let [road-stops [{:id "depot" :x 0.0 :y 0.0 :zone "road"}
-                    {:id "pickup" :x 2.0 :y 0.0 :zone "road"}]]
-    (is (= [["depot" "pickup"] 2.0]
-           (last-mile/sequence-stops road-stops)))
-    (is (= [[] 0.0] (last-mile/sequence-stops [])))))
 
 (deftest test-g7-refuses-sae-5
   (is (envelope-violation? #(last-mile/plan-last-mile collinear :sae-level 5 :commanded-mps 1.0))))

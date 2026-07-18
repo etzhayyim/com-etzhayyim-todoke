@@ -11,13 +11,13 @@
 
   Gracefully SKIPS if python3 is unavailable (red only on a genuine py↔clj divergence).
 
-  Run:  bb --classpath 20-actors 20-actors/todoke/methods/test_last_mile_parity.clj"
+  Run: bb test/todoke/methods/test_last_mile_parity.clj"
   (:require [todoke.methods.last-mile :as lm]
             [clojure.java.shell :refer [sh]]
             [cheshire.core :as json]
             [clojure.test :refer [deftest is run-tests]]))
 
-(def ^:private py-dir "20-actors/todoke/methods")
+(def ^:private py-dir "src/todoke/methods")
 
 (defn- clj-stops [] [(lm/stop "s0" 0 0 "sidewalk") (lm/stop "s1" 3 0 "sidewalk")
                      (lm/stop "s2" 3 4 "sidewalk") (lm/stop "s3" 0 4 "sidewalk")

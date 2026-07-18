@@ -1,7 +1,7 @@
 (ns todoke.methods.last-mile
   "todoke 届け — pure-Clojure mirror of the todoke-route Rust core + courier liberation sizing.
 
-  1:1 port of `20-actors/todoke/methods/last_mile.py` (ADR-2606042300).
+  1:1 port of `./src/todoke/methods/last_mile.cljc` (ADR-2606042300).
 
   Purposes:
 
@@ -37,6 +37,12 @@
   [msg]
   (ex-info msg {:envelope-violation true}))
 
+(defn stop
+  "Convenience constructor for a Stop map {:id :x :y :zone} — a plain map is
+  equally valid; this just names the shape (mirrors Python's Stop(id, x, y, zone))."
+  [id x y zone]
+  {:id id :x x :y y :zone zone})
+
 (defn- stop-dist
   "Euclidean distance between two stops."
   [a b]
@@ -50,7 +56,7 @@
   (doseq [s stops]
     (let [cap (get zone-speed-cap-mps (:zone s))]
       (when (nil? cap)
-        (throw (envelope-violation (str "G7: stop " (:id s) " zone " (pr-str (:zone s)) " outside todoke ODD (N2)"))))
+        (throw (envelope-violation (str "G7: stop " (:id s) " zone '" (:zone s) "' outside todoke ODD (N2)"))))
       (when (> commanded-mps cap)
         (throw (envelope-violation (str "G7: commanded " commanded-mps " m/s exceeds " (:zone s) " cap " cap " m/s at stop " (:id s))))))))
 
@@ -127,20 +133,6 @@
         tour
         (recur new-tour)))))
 
-(defn sequence-stops
-  "Return [order-of-ids length] for an open route without applying todoke's
-   delivery safety envelope. This is the repository boundary for consumers
-   that share the deterministic sequencer but use another operational envelope.
-   The first stop remains pinned; an empty collection returns [[] 0.0]."
-  [stops]
-  (if (empty? stops)
-    [[] 0.0]
-    (let [seq-idx (two-opt (nearest-neighbour stops) stops)
-          length (reduce + (map #(stop-dist (nth stops (nth seq-idx %))
-                                            (nth stops (nth seq-idx (inc %))))
-                                (range (dec (count seq-idx)))))]
-      [(mapv #(-> (nth stops %) :id) seq-idx) length])))
-
 (defn plan-last-mile
   "Return [order-of-ids length-m] for a safety-validated last-mile path.
 
@@ -154,7 +146,11 @@
   (when (empty? stops)
     (throw (envelope-violation "G7: no stops to route")))
   (check-envelope stops sae-level commanded-mps)
-  (sequence-stops stops))
+  (let [seq-idx (two-opt (nearest-neighbour stops) stops)
+        length (reduce + (map #(stop-dist (nth stops (nth seq-idx %))
+                                          (nth stops (nth seq-idx (inc %))))
+                              (range (dec (count seq-idx)))))]
+    [(mapv #(-> (nth stops %) :id) seq-idx) length]))
 
 ;; --- Labour-liberation sizing (mission + G2 coupling) ---------------------------------
 

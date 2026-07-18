@@ -1,0 +1,4 @@
+{:migration/id :todoke/standalone-cutover :status :complete
+ :source/root "20-actors/todoke" :target/repository "orgs/etzhayyim/com-etzhayyim-todoke"
+ :canonical/format :edn :wire/root "wire" :pruned #{:go :tinygo :shell :python}
+ :root/cleanup ["20-actors/todoke" "00-contracts/lexicons/com/etzhayyim/todoke"]}
